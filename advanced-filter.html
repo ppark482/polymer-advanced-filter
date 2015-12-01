@@ -1,0 +1,527 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+Advanced Filtering Element
+
+Example:
+
+    <advanced-filter></advanced-filter>
+
+Example:
+
+    <advanced-filter></advanced-filter>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="advanced-filter">
+    <style>
+        :host {
+            display: block;
+        }
+
+        .table-filters { padding: 0 30px; }
+
+        .table-filters {
+            margin-top: 30px;
+        }
+
+        .filter-bar {
+            height: 25px;
+            border-right: 1px solid #DCDCDC;
+            margin-left: 15px;
+            margin-right: 20px;
+        }
+
+        .advisors-results {
+            white-space: nowrap;
+            font-size: 12px;
+            line-height: 25px;
+        }
+
+        .filter-list-button {
+            cursor: pointer;
+            min-width: 95px;
+        }
+
+        :host  .advanced-filters > div.filter-wrap {
+            padding: 0 20px;
+        }
+
+        iron-dropdown#filterDropdown {
+            background: white;
+            margin-top: 35px;
+            margin-left: 15px;
+            padding: 20px 10px;
+
+            -webkit-box-shadow: 0 0 16px -2px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0 0 16px -2px rgba(0,0,0,0.75);
+            box-shadow: 0 0 16px -2px rgba(0,0,0,0.75);
+        }
+
+        iron-dropdown#filterDropdown .dropdown-content {
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .checkbox-container paper-checkbox {
+            --paper-checkbox-unchecked-color: #4d4d4d;
+            --paper-checkbox-checked-color: #4d4d4d;
+            --paper-checkbox-checkmark-color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        #filterDropdownOpen {
+            width: 125px;
+            text-align: center;
+            padding: 15px 0;
+            position: absolute;
+            font-size: 16px;
+            top: -48px;
+            left: 0;
+            background-color: white;
+            cursor: pointer;
+            -webkit-box-shadow: 0 0 16px -2px gba(0,0,0,0.75);
+            -moz-box-shadow: 0 0 16px -2px rgba(0,0,0,0.75);
+            box-shadow: 0 0 16px -2px rgba(0,0,0,0.75);
+        }
+
+        .filter-dropdown-open-cover-tall {
+            background-color: white;
+            width: 150px;
+            height: 50px;
+            position: absolute;
+            top: 9px;
+            left: 0;
+            z-index: 1;
+        }
+
+        .filter-dropdown-open-cover-wide {
+            background-color: white;
+            width: 200px;
+            height: 50px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .filter-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        .filter-wrapper h4 { margin-top: 5px; }
+
+        .star-container div{
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        iron-list { height: 300px; }
+
+        .scroll-container iron-selector {
+            display: block;
+            max-height: 350px;
+            max-width: 200px;
+            overflow: auto;
+            padding: 10px 0;
+            border: 1px solid lightgray;
+        }
+
+        .scroll-container iron-selector div {
+            padding: 5px 20px;
+            cursor: pointer;
+        }
+
+        .scroll-container iron-selector div.iron-selected { background: #EAEAEA; }
+
+        .filter-buttons {
+            margin-top: 20px;
+        }
+
+        .filter-buttons paper-button {
+            height: 38px;
+        }
+
+        .filter-buttons paper-button.black-button {
+            color: #fff;
+            background: #4A4A4A;
+        }
+
+        #appliedFilters {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: row;
+            flex-direction: row;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -webkit-align-items: center;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        #appliedFilters .listed-filters {
+            background-color: #EAEAEA;
+            padding: 2px 8px;
+            border-radius: 5px;
+            margin: 2px;
+            font-size: 14px;
+        }
+
+        #appliedFilters .listed-filters iron-icon {
+            color: #5F5F5F;
+            width: 16px;
+            height: 16px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        .clear-filters {
+            cursor: pointer;
+            margin-right: 10px;
+            margin-left: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        #appliedFilters .listed-filters star-ratings ::content iron-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .star-container iron-selector div.iron-selected star-ratings ::content iron-icon {
+            color: gold;
+        }
+
+        .filter-container {
+            min-width: 190px;
+        }
+    </style>
+
+    <template>
+
+        <div class="table-filters flex horizontal layout">
+            <div class="dropdown-trigger layout horizontal">
+                <div class="flex layout horizontal filter-container">
+                    <span class="filter-list-button" on-tap="openFilters">Filter List <iron-icon icon="fa:angle-down"></iron-icon></span>
+
+                    <span class="filter-bar"></span>
+                    <div class="advisors-results"><span>{{resultsTotal}}</span> <span>{{resultsTitle}}</span></div>
+                </div>
+
+                <div id="appliedFilters" class="layout horizontal">
+                    <template id="appliedFiltersListInner" is="dom-repeat" items="{{activeApplied}}" as="selected" index-as="selected_no">
+                        <template is="dom-if" if="{{selected.typeScroll}}">
+                            <div class="listed-filters" data-id$="{{selected.id}}" data-name$="{{selected.item}}">
+                                <span>{{selected.item}}</span>
+                                <iron-icon icon="fa:times-circle-o" on-click="removeFilter"></iron-icon>
+                            </div>
+                        </template>
+
+                        <template is="dom-if" if="{{selected.typeCheck}}">
+                            <div class="listed-filters" data-id$="{{selected.id}}" data-name$="{{selected.item}}">
+                                <span>{{selected.item}}</span>
+                                <iron-icon icon="fa:times-circle-o" on-click="removeFilter"></iron-icon>
+                            </div>
+                        </template>
+
+                        <template is="dom-if" if="{{selected.typeStar}}">
+                            <div class="listed-filters flex horizontal layout" data-id$="{{selected.id}}" data-name$="{{selected.item}}" style="min-width: 105px; width: 105px; max-width: 105px;">
+                                <star-ratings active-stars="{{selected.item}}"></star-ratings>
+                                <iron-icon icon="fa:times-circle-o" on-click="removeFilter"></iron-icon>
+                            </div>
+                        </template>
+                    </template>
+
+                    <template is="dom-if" if="{{hasFilters}}">
+                        <div class="clear-filters" on-click="clearFilters">Clear Filters</div>
+                    </template>
+                </div>
+            </div>
+
+            <iron-dropdown id="filterDropdown" horizontal-align="left" vertical-align="top">
+                <div class="dropdown-content">
+                    <div id="filterDropdownOpen" on-click="closeFilters">Filter List <iron-icon icon="fa:angle-up"></iron-icon></div>
+                    <div class="filter-dropdown-open-cover-tall"></div>
+                    <div class="filter-dropdown-open-cover-wide"></div>
+                    <div class="flex horizontal layout filter-wrapper advanced-filters">
+                        <template id="filterDropdownTemplate" is="dom-repeat" items="[[response]]" as="filter" sort="_sortFilters">
+
+                            <template is="dom-if" if="[[filter.typeScroll]]">
+                                <div class="filter-wrap scroll-container">
+                                    <h4>[[filter.title]]</h4>
+                                    <iron-selector id="[[filter.id]]" multi="true" attr-for-selected="name">
+                                        <template is="dom-repeat" items="[[filter.list]]" as="listed" index-as="listed_no">
+                                            <div name="[[listed.name]]">[[listed.name]]</div>
+                                        </template>
+                                    </iron-selector>
+                                </div>
+                            </template>
+
+                            <template is="dom-if" if="[[filter.typeCheck]]">
+                                <div class="filter-wrap checkbox-container">
+                                    <h4>[[filter.title]]</h4>
+                                    <iron-selector id="[[filter.id]]" multi="true" attr-for-selected="name" class="flex layout vertical">
+                                        <template is="dom-repeat" items="[[filter.list]]" as="listed" index-as="listed_no">
+                                            <paper-checkbox name="[[listed]]">[[listed]]</paper-checkbox>
+                                        </template>
+                                    </iron-selector>
+                                </div>
+                            </template>
+
+                            <template is="dom-if" if="[[filter.typeStar]]">
+                                <div class="filter-wrap star-container">
+                                    <h4>[[filter.title]]</h4>
+                                    <iron-selector id="[[filter.id]]" multi="true" attr-for-selected="name">
+                                        <template is="dom-repeat" items="[[filter.list]]" as="listed" index-as="listed_no">
+                                            <div name="[[listed.name]]"><star-ratings active-stars='[[listed.name]]'></star-ratings></div>
+                                        </template>
+                                    </iron-selector>
+                                </div>
+                            </template>
+
+                        </template>
+
+                    </div>
+                    <div class="flex horizontal layout filter-buttons">
+                        <div class="flex"></div>
+                        <paper-button class="black-button" on-click="setApply">Apply Filters</paper-button>
+                        <paper-button  on-click="cancelApply">Cancel</paper-button>
+                    </div>
+                </div>
+            </iron-dropdown>
+        </div>
+
+    </template>
+
+    <script>
+        (function () {
+            Polymer({
+                is: 'advanced-filter',
+                properties: {
+                    hasFilters: Boolean,
+                    resultsTotal: {
+                        type: String,
+                        value: "0",
+                        notify: true
+                    },
+                    resultsTitle: {
+                        type: String,
+                        value: "",
+                        notify: true
+                    },
+                    response: {
+                        type: Array,
+                        readOnly: true,
+                        notify: true
+                    },
+                    activeApplied: {
+                        type: Array,
+                        value: [],
+                        notify: true
+                    }
+                },
+                observers: [
+                    '_filterSelectionChanged(filterList.*)'
+                ],
+                _filterSelectionChanged: function(changeRecord) {
+                    this._setResponse(this.filterList);
+
+                    this.hasFilters = false;
+                    var hasFiltersActive = false;
+
+                    _.forEach(changeRecord.base, function(n) {
+                        if(n.appliedValues && n.appliedValues.length > 0) {
+                            hasFiltersActive = true;
+                        }
+                    });
+
+                    if(hasFiltersActive) this.hasFilters = true;
+                },
+                _sortFilters: function(a, b) {
+                    return a.order - b.order;
+                },
+                loadFilters: function() {
+                    this.resultsTotal = "0";
+                    this.hasFilters = false;
+                },
+                openFilters: function() {
+                    var self = this;
+
+                    _.forEach(this.filterList, function(list) {
+                        if(list.typeCheck) {
+                            _.forEach(self.$$('#'+ list.id).getElementsByClassName('iron-selected'), function(n) {
+                                n.checked = false;
+                            });
+                        }
+
+                        if(self.$$('#'+ list.id).selectedValues) {
+                            self.$$('#'+ list.id).selectedValues = [];
+                        }
+
+                        _.forEach(list.appliedValues, function(sv) {
+                            self.$$('#'+ list.id).select(sv);
+                        });
+
+                        if(list.typeCheck) {
+                            _.forEach(self.$$('#'+ list.id).getElementsByClassName('iron-selected'), function(n) {
+                                n.checked = true;
+                            });
+                        }
+                    });
+
+
+                    this.$.filterDropdown.open();
+                },
+                closeFilters: function() {
+                    this.$.filterDropdown.close();
+                },
+                checkFilters: function() {
+                    this.hasFilters = false;
+                    var hasFiltersActive = false;
+
+                    _.forEach(this.filterList, function(n) {
+
+                        if(n.appliedValues && n.appliedValues.length > 0) {
+                            hasFiltersActive = true;
+                        }
+                    });
+
+                    if(hasFiltersActive) this.hasFilters = true;
+                },
+                removeFilter: function(e) {
+                    var self = this;
+                    var selectedId = e.target.parentElement.dataset.id;
+                    var selectedName = e.target.parentElement.dataset.name;
+
+                    this.splice('activeApplied', _.findIndex(this.activeApplied, {id: selectedId, item: selectedName}),1);
+
+                    _.forEach(this.filterList, function(list, index) {
+                        if(list.id === selectedId) {
+                            _.forEach(list.appliedValues, function(item,i) {
+                                if(item === selectedName) {
+                                    self.filterList[index].appliedValues.splice(i,1);
+                                    self.notifyPath('filterList.*', self.filterList[index].appliedValues);
+                                }
+                            });
+                        }
+                    });
+
+                    this.checkFilters();
+                    this.fire('kick', {kicked: true});
+                },
+                clearFilters: function() {
+                    var self = this;
+
+                    _.forEach(this.filterList, function(list,i) {
+                        if(list.typeCheck) {
+                            _.forEach(self.$$('#'+ list.id).getElementsByClassName('iron-selected'), function(n) {
+                                n.checked = false;
+                            });
+                        }
+
+                        if(self.$$('#'+ list.id).selectedValues) {
+                            self.$$('#'+ list.id).selectedValues = [];
+                            self.filterList[i].appliedValues.length = 0;
+                        }
+
+                        self.notifyPath('filterList.*', self.filterList[i].appliedValues);
+                    });
+
+                    this.splice('activeApplied', 0, this.activeApplied.length);
+                    this.closeFilters();
+                    this.fire('kick', {kicked: true});
+                },
+                setApply: function() {
+                    var self = this;
+
+                    _.forEach(this.filterList, function(list,i) {
+
+                        if(_.compact(list.appliedValues).length) {
+                            self.filterList[i].appliedValues.splice(0, list.appliedValues.length);
+                        }
+
+                        if(_.compact(self.$$('#'+ list.id).selectedValues).length) {
+                            _.forEach(_.compact(self.$$('#'+ list.id).selectedValues), function(sv) {
+                                self.filterList[i].appliedValues.push(sv);
+                            });
+                        }
+
+                        self.notifyPath('filterList.*', self.filterList[i].appliedValues);
+                    });
+                    this.closeFilters();
+                    this.applySelected();
+                    this.fire('kick', {kicked: true});
+                },
+                cancelApply: function() {
+                    this.closeFilters();
+                },
+                applySelected: function() {
+                    var self = this;
+                    var tmp = [];
+                    var clean = _.map(_.compact(this.activeApplied), function(o) { return _.omit(o, ['typeCheck', 'typeStar', 'typeScroll']); });
+                    var difference = function(array){
+                        var rest = Array.prototype.concat.apply(Array.prototype, Array.prototype.slice.call(arguments, 1));
+
+                        var containsEquals = function(obj, target) {
+                            if (obj === null) return false;
+                            return _.any(obj, function(value) {
+                                return _.isEqual(value, target);
+                            });
+                        };
+
+                        return _.filter(array, function(value){ return ! containsEquals(rest, value); });
+                    };
+
+                    _.forEach(this.filterList, function(row) {
+                        if(row.appliedValues.length > 0) {
+                            _.forEach(row.appliedValues, function(item) {
+                                tmp.push({id:row.id, item:item});
+                            });
+                        }
+                    });
+
+                    _.forEach(difference(clean, tmp), function(obj){
+                        self.splice('activeApplied', _.findIndex( self.activeApplied, { 'id': obj.id, 'item': obj.item }), 1);
+                    });
+
+                    _.forEach(this.filterList, function(list) {
+                        if(_.compact(list.appliedValues).length) {
+                            _.forEach(_.compact(list.appliedValues), function(item) {
+                                if(list.typeCheck && !_.some(self.activeApplied, {id:list.id, typeCheck:true, item:item})) {
+                                    self.push('activeApplied', {id:list.id, typeCheck:true, item:item});
+                                } else if(list.typeStar && !_.some(self.activeApplied, {id:list.id, typeStar:true, item:item})) {
+                                    self.push('activeApplied', {id:list.id, typeStar:true, item:item});
+                                } else if(list.typeScroll && !_.some(self.activeApplied, {id:list.id, typeScroll:true, item:item})) {
+                                    self.push('activeApplied', {id:list.id, typeScroll:true, item:item});
+                                }
+                            });
+                        } else {
+                            _.forEach(_.compact(self.activeApplied), function(obj,i) {
+                                if(obj.id === list.id) {
+                                    self.splice('activeApplied', i, 1);
+                                }
+                            });
+                        }
+                    });
+                    this.notifyPath('activeApplied.*', this.activeApplied);
+                }
+            });
+
+        })();
+    </script>
+</dom-module>

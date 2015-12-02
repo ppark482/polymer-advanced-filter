@@ -18,30 +18,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </head>
     <body unresolved>
 
-<!--
-    <advanced-filter id="filter" filter-list="{{filterList}}" results-total="{{resultsTotal}}" results-title="Results"></advanced-filter>
+    <advanced-filter id="filter" results-total="1" results-title="Results"></advanced-filter>
 
     <script>
 
         (function (){
-            var filter = document.getElementById('filter'),
-                fruitList = ['Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry'],
-                commonFruits = ['Apples', 'Bananas'];
-
-            var filterElement;
-//            filterElement += '<advanced-filter has-filters="true" results-title="Common Fruits" ';
-//            filterElement += 'filter-list="' + fruitList + '"';
-//            filterElement += '></advanced-filter>';
-//
-//            filter.innerHTML = filterElement;
-
-            filter.loadFilters();
-
-
+            var filter = document.getElementById('filter');
+            var filterList = [
+                    {
+                    "order": "1",
+                    "id": "fruitList",
+                    "title": "Filter By Fruit",
+                    "typeScroll": true,
+                    "list": ['Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry','Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry','Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry', 'Strawberry'],
+                    "appliedValues": []
+                    },{
+                    "order":"2",
+                    "id":"vegetableList",
+                    "title":"Filter By Vegetable",
+                    "typeCheck":true,
+                    "list": ['Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry'],
+                    "appliedValues":[]
+                    }, {
+                    "order": "3",
+                    "id": "starList",
+                    "title": "Filter By Rating",
+                    "typeStar": true,
+                    "list": ['0', '1', '2', '3', '4', '5'],
+                    "appliedValues": []
+                    }
+            ];
+            filter.load();
+            filter.filterList = filterList;
+            filter.resultsTotal = '1';
         }());
 
     </script>
--->
 
     </body>
 </html>

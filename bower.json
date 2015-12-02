@@ -21,7 +21,10 @@
     "iron-icons": "PolymerElements/iron-icons#~1.0.5",
     "iron-iconset-svg": "PolymerElements/iron-iconset-svg#~1.0.9",
     "iron-icon": "PolymerElements/iron-icon#~1.0.7",
-    "lodash": "~3.10.1"
+    "lodash": "~3.10.1",
+    "star-ratings": "https://github.com/ppark482/polymer-star-ratings.git",
+    "paper-checkbox": "PolymerElements/paper-checkbox#~1.0.16",
+    "iron-dropdown": "PolymerElements/iron-dropdown#~1.0.6"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

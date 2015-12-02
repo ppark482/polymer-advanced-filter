@@ -10,7 +10,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-icons/iron-icons.html"/>
+<link rel="import" href="../iron-flex-layout/classes/iron-flex-layout.html"/>
+<link rel="import" href="../iron-selector/iron-selector.html"/>
+<link rel="import" href="../paper-checkbox/paper-checkbox.html"/>
+<link rel="import" href="../paper-button/paper-button.html"/>
+<link rel="import" href="../iron-dropdown/iron-dropdown.html"/>
 <link rel="import" href="../fontawesome-iconset/fa-all.html">
+<link rel="import" href="../star-ratings/star-ratings.html">
+<script src="../lodash/lodash.min.js"></script>
 
 <!--
 Advanced Filtering Element
@@ -264,7 +271,7 @@ Example:
                                     <h4>[[filter.title]]</h4>
                                     <iron-selector id="[[filter.id]]" multi="true" attr-for-selected="name">
                                         <template is="dom-repeat" items="[[filter.list]]" as="listed" index-as="listed_no">
-                                            <div name="[[listed.name]]">[[listed.name]]</div>
+                                            <div name="[[listed]]">[[listed]]</div>
                                         </template>
                                     </iron-selector>
                                 </div>
@@ -286,7 +293,7 @@ Example:
                                     <h4>[[filter.title]]</h4>
                                     <iron-selector id="[[filter.id]]" multi="true" attr-for-selected="name">
                                         <template is="dom-repeat" items="[[filter.list]]" as="listed" index-as="listed_no">
-                                            <div name="[[listed.name]]"><star-ratings active-stars='[[listed.name]]'></star-ratings></div>
+                                            <div name="[[listed]]"><star-ratings active-stars='[[listed]]'></star-ratings></div>
                                         </template>
                                     </iron-selector>
                                 </div>
@@ -337,7 +344,8 @@ Example:
                     '_filterSelectionChanged(filterList.*)'
                 ],
                 _filterSelectionChanged: function(changeRecord) {
-                    this._setResponse(this.filterList);
+                    var cleanResponse = this._cleanFilters(this.filterList);
+                    this._setResponse(cleanResponse);
 
                     this.hasFilters = false;
                     var hasFiltersActive = false;
@@ -353,7 +361,12 @@ Example:
                 _sortFilters: function(a, b) {
                     return a.order - b.order;
                 },
-                loadFilters: function() {
+                _cleanFilters: function(list) {
+                    return _.forEach(list, function(x) {
+                        x.list = _.uniq(x.list);
+                    });
+                },
+                load: function() {
                     this.resultsTotal = "0";
                     this.hasFilters = false;
                 },

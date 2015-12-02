@@ -9,24 +9,39 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <title>Advanced Filter Demo</title>
-    <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
-    <link rel="import" href="../advanced-filter.html">
-  </head>
-  <body unresolved>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+        <title>Advanced Filter Demo</title>
+        <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+        <link rel="import" href="../advanced-filter.html">
+    </head>
+    <body unresolved>
 
-    <div id="put_filter_here"></div>
-    <advanced-filter has-filters="true" results-total="" results-title="Some Title" response=foods active-applied=active></advanced-filter>
+<!--
+    <advanced-filter id="filter" filter-list="{{filterList}}" results-total="{{resultsTotal}}" results-title="Results"></advanced-filter>
 
     <script>
 
         (function (){
+            var filter = document.getElementById('filter'),
+                fruitList = ['Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry'],
+                commonFruits = ['Apples', 'Bananas'];
 
-        }())
+            var filterElement;
+//            filterElement += '<advanced-filter has-filters="true" results-title="Common Fruits" ';
+//            filterElement += 'filter-list="' + fruitList + '"';
+//            filterElement += '></advanced-filter>';
+//
+//            filter.innerHTML = filterElement;
+
+            filter.loadFilters();
+
+
+        }());
 
     </script>
-  </body>
+-->
+
+    </body>
 </html>

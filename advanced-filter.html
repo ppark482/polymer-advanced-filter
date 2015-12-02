@@ -374,29 +374,33 @@ Example:
                     var self = this;
 
                     _.forEach(this.filterList, function(list) {
+                        _setTypeCheck(list, false);
+                        _clearSelectedValues(list);
+                        _selectAppliedValues(list);
+                        _setTypeCheck(list, true);
+                    });
+
+                    this.$.filterDropdown.open();
+
+                    function _setTypeCheck (list, bool) {
                         if(list.typeCheck) {
                             _.forEach(self.$$('#'+ list.id).getElementsByClassName('iron-selected'), function(n) {
-                                n.checked = false;
+                                n.checked = bool;
                             });
                         }
-
+                    }
+                    function _clearSelectedValues (list) {
                         if(self.$$('#'+ list.id).selectedValues) {
                             self.$$('#'+ list.id).selectedValues = [];
                         }
+                    }
 
+                    function _selectAppliedValues (list) {
                         _.forEach(list.appliedValues, function(sv) {
                             self.$$('#'+ list.id).select(sv);
                         });
+                    }
 
-                        if(list.typeCheck) {
-                            _.forEach(self.$$('#'+ list.id).getElementsByClassName('iron-selected'), function(n) {
-                                n.checked = true;
-                            });
-                        }
-                    });
-
-
-                    this.$.filterDropdown.open();
                 },
                 closeFilters: function() {
                     this.$.filterDropdown.close();

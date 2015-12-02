@@ -515,14 +515,31 @@ Example:
                     });
 
                     _.forEach(this.filterList, function(list) {
-                        if(_.compact(list.appliedValues).length) {
-                            _.forEach(_.compact(list.appliedValues), function(item) {
-                                if(list.typeCheck && !_.some(self.activeApplied, {id:list.id, typeCheck:true, item:item})) {
-                                    self.push('activeApplied', {id:list.id, typeCheck:true, item:item});
-                                } else if(list.typeStar && !_.some(self.activeApplied, {id:list.id, typeStar:true, item:item})) {
-                                    self.push('activeApplied', {id:list.id, typeStar:true, item:item});
-                                } else if(list.typeScroll && !_.some(self.activeApplied, {id:list.id, typeScroll:true, item:item})) {
-                                    self.push('activeApplied', {id:list.id, typeScroll:true, item:item});
+                        var appliedValues = _.compact(list.appliedValues);
+
+                        if(appliedValues.length) {
+                            var condObject,
+                                appliedValue;
+                            function _setFilterType (type) {
+                                _setConditionalObject(type);
+                                return !_.some(self.activeApplied, condObject);
+                            }
+                            function _setConditionalObject (type) {
+                                condObject = { id : list.id, item : appliedValue };
+                                condObject[type] = true;
+                            }
+                            function _setActive () {
+                                self.push('activeApplied', condObject);
+                            }
+
+                            _.forEach(appliedValues, function(item) {
+                                appliedValue = item;
+                                if(list.typeCheck && _setFilterType('typeCheck')) {
+                                    _setActive();
+                                } else if(list.typeStar && _setFilterType('typeStar')) {
+                                    _setActive();
+                                } else if(list.typeScroll && _setFilterType('typeScroll')) {
+                                    _setActive()
                                 }
                             });
                         } else {

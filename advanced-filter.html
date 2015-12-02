@@ -366,6 +366,20 @@ Example:
                         x.list = _.uniq(x.list);
                     });
                 },
+                _setTypeCheck: function (list, bool) {
+                    var self = this;
+                    if(list.typeCheck) {
+                        _.forEach(self.$$('#'+ list.id).getElementsByClassName('iron-selected'), function(n) {
+                            n.checked = bool;
+                        });
+                    }
+                },
+                _clearSelectedValues: function (list) {
+                    var self = this;
+                    if(self.$$('#'+ list.id).selectedValues) {
+                        self.$$('#'+ list.id).selectedValues = [];
+                    }
+                },
                 load: function() {
                     this.resultsTotal = "0";
                     this.hasFilters = false;
@@ -374,26 +388,13 @@ Example:
                     var self = this;
 
                     _.forEach(this.filterList, function(list) {
-                        _setTypeCheck(list, false);
-                        _clearSelectedValues(list);
+                        self._setTypeCheck(list, false);
+                        self._clearSelectedValues(list);
                         _selectAppliedValues(list);
-                        _setTypeCheck(list, true);
+                        self._setTypeCheck(list, true);
                     });
 
                     this.$.filterDropdown.open();
-
-                    function _setTypeCheck (list, bool) {
-                        if(list.typeCheck) {
-                            _.forEach(self.$$('#'+ list.id).getElementsByClassName('iron-selected'), function(n) {
-                                n.checked = bool;
-                            });
-                        }
-                    }
-                    function _clearSelectedValues (list) {
-                        if(self.$$('#'+ list.id).selectedValues) {
-                            self.$$('#'+ list.id).selectedValues = [];
-                        }
-                    }
 
                     function _selectAppliedValues (list) {
                         _.forEach(list.appliedValues, function(sv) {
@@ -443,11 +444,7 @@ Example:
                     var self = this;
 
                     _.forEach(this.filterList, function(list,i) {
-                        if(list.typeCheck) {
-                            _.forEach(self.$$('#'+ list.id).getElementsByClassName('iron-selected'), function(n) {
-                                n.checked = false;
-                            });
-                        }
+                        self._setTypeCheck(list, false);
 
                         if(self.$$('#'+ list.id).selectedValues) {
                             self.$$('#'+ list.id).selectedValues = [];
@@ -520,7 +517,7 @@ Example:
                         if(appliedValues.length) {
                             var condObject,
                                 appliedValue;
-                            function _setFilterType (type) {
+                            function _checkIfFilterType (type) {
                                 _setConditionalObject(type);
                                 return !_.some(self.activeApplied, condObject);
                             }
@@ -534,11 +531,11 @@ Example:
 
                             _.forEach(appliedValues, function(item) {
                                 appliedValue = item;
-                                if(list.typeCheck && _setFilterType('typeCheck')) {
+                                if(list.typeCheck && _checkIfFilterType('typeCheck')) {
                                     _setActive();
-                                } else if(list.typeStar && _setFilterType('typeStar')) {
+                                } else if(list.typeStar && _checkIfFilterType('typeStar')) {
                                     _setActive();
-                                } else if(list.typeScroll && _setFilterType('typeScroll')) {
+                                } else if(list.typeScroll && _checkIfFilterType('typeScroll')) {
                                     _setActive()
                                 }
                             });

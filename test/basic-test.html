@@ -108,10 +108,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 test('check for resultsTotal', function () {
                     var numValue = parseInt(el.resultsTotal);
                     assert.isNumber(numValue, '"resultsTotal" must be a string of a number');
-                    function checkNumValue () {
-                        if (numValue >= 0) { return true }
-                    }
-                    assert.isTrue(checkNumValue(), '"resultsTotal" must be greater than or equal to 0');
+                    assert.operator(numValue, '>=', 0, '"resultsTotal" must be greater than or equal to 0');
                     assert.isString(el.resultsTotal, 'resultsTotal must be a string');
                 });
 

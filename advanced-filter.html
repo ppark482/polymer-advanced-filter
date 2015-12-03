@@ -356,7 +356,7 @@ Example:
                         }
                     });
 
-                    if(hasFiltersActive) this.hasFilters = true;
+                    if (hasFiltersActive) this.hasFilters = true;
                 },
                 _cleanFilters: function(list) {
                     return _.forEach(list, function(x) {
@@ -365,7 +365,7 @@ Example:
                 },
                 _clearSelectedValues: function (list) {
                     var selectedValues = this._elGetByIdOf(list).selectedValues;
-                    if(selectedValues) {
+                    if (selectedValues) {
                         selectedValues = [];
                     }
                 },
@@ -374,7 +374,7 @@ Example:
                 },
                 _setTypeCheck: function (list, bool) {
                     var self = this;
-                    if(list.typeCheck) {
+                    if (list.typeCheck) {
                         _.forEach(self._elGetByIdOf(list).getElementsByClassName('iron-selected'), function(n) {
                             n.checked = bool;
                         });
@@ -415,12 +415,12 @@ Example:
 
                     _.forEach(this.filterList, function(n) {
 
-                        if(n.appliedValues && n.appliedValues.length > 0) {
+                        if (n.appliedValues && n.appliedValues.length > 0) {
                             hasFiltersActive = true;
                         }
                     });
 
-                    if(hasFiltersActive) this.hasFilters = true;
+                    if (hasFiltersActive) this.hasFilters = true;
                 },
                 removeFilter: function(e) {
                     var self = this;
@@ -430,10 +430,10 @@ Example:
                     this.splice('activeApplied', _.findIndex(this.activeApplied, {id: selectedId, item: selectedName}),1);
 
                     _.forEach(this.filterList, function(list, index) {
-                        if(list.id === selectedId) {
+                        if (list.id === selectedId) {
                             _.forEach(list.appliedValues, function(item,i) {
-                                if(item === selectedName) {
-                                    self.filterList[index].appliedValues.splice(i,1);
+                                if (item === selectedName) {
+                                    self.filterList[index].appliedValues.splice(i, 1);
                                     self.notifyPath('filterList.*', self.filterList[index].appliedValues);
                                 }
                             });
@@ -463,13 +463,13 @@ Example:
                 setApply: function() {
                     var self = this;
 
-                    _.forEach(this.filterList, function(list,i) {
+                    _.forEach(this.filterList, function(list, i) {
 
-                        if(_.compact(list.appliedValues).length) {
+                        if (_.compact(list.appliedValues).length) {
                             self.filterList[i].appliedValues.splice(0, list.appliedValues.length);
                         }
 
-                        if(_.compact(self._elGetByIdOf(list).selectedValues).length) {
+                        if (_.compact(self._elGetByIdOf(list).selectedValues).length) {
                             _.forEach(_.compact(self._elGetByIdOf(list).selectedValues), function(sv) {
                                 self.filterList[i].appliedValues.push(sv);
                             });
@@ -504,7 +504,7 @@ Example:
                     };
 
                     _.forEach(this.filterList, function(row) {
-                        if(row.appliedValues.length > 0) {
+                        if (row.appliedValues.length > 0) {
                             _.forEach(row.appliedValues, function(item) {
                                 tmp.push({id:row.id, item:item});
                             });
@@ -518,7 +518,7 @@ Example:
                     _.forEach(this.filterList, function(list) {
                         var appliedValues = _.compact(list.appliedValues);
 
-                        if(appliedValues.length) {
+                        if (appliedValues.length) {
                             var condObject,
                                 appliedValue;
 

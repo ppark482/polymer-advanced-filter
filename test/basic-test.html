@@ -39,7 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         "order":"2",
                         "id":"vegetableList",
                         "title":"Filter By Vegetable",
-                        "typeCheck":true,
+                        "typeCheck": true,
                         "list": ['Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry'],
                         "appliedValues":[]
                     }, {
@@ -61,6 +61,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             suite('<advanced-filter>', function () {
 
                 var el = document.querySelector('advanced-filter');
+                function hasProperty (object, property) {
+                    return Object.prototype.hasOwnProperty.call(object, property);
+                }
 
                 test('check for validity of filterList', function () {
                     assert.isArray(el.filterList, '<advanced-filter> should have a property "filterList" that is an array of objects');
@@ -68,21 +71,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                 test('check objects in filterList', function () {
                     var length = el.filterList.length,
-                        filterTypes = ['typeScroll', 'typeCheck', 'typeStar'];
+                        filterTypes = ['typeScroll', 'typeCheck', 'typeStar'],
+                        prop;
 
                     function checkForFilterTypes (obj) {
-
+                        var hasTrue = false;
+                        for (var i = 0; i < 3; i++) {
+                            if(hasProperty(obj, filterTypes[i])) {
+                                hasTrue = true;
+                                prop = filterTypes[i];
+                            }
+                        }
+                        return hasTrue;
                     }
 
                     for (var i = 0; i < length; i++) {
-                        assert.isObject(el.filterList[i], 'must be an object');
+                        assert.isObject(el.filterList[i], 'filterList must be an array of objects');
                         assert.isNumber(el.filterList[i].order, '"order" must be a string of a number');
                         assert.isString(el.filterList[i].id, '"id" must be a string');
                         assert.isString(el.filterList[i].title, '"title" must be a string');
                         assert.isArray(el.filterList[i].list, '"list" must be an array');
+                        for (var j = 0; j < el.filterList[i].list.length; j++) {
+                            assert.isString(el.filterList[i].list[j], 'list items must be strings')
+                        }
                         assert.isArray(el.filterList[i].appliedValues, '"appliedValues" must be an array');
                         assert.isTrue(checkForFilterTypes(el.filterList[i]), '"typeScroll, "typeCheck", or "typeStar" must be a key in each object');
+                        assert.propertyVal(el.filterList[i], prop, true, prop + ' must be set equal to true');
                     }
+
+                });
+
+                test('check for resultsTitle', function () {
+                    assert.isString(el.resultsTitle, 'resultsTitle must be a string');
+                });
+
+                test('check for resultsTotal', function () {
+                    var numValue = parseInt(el.resultsTotal);
+                    assert.isNumber(numValue, '"resultsTotal" must be a string of a number');
+                    function checkNumValue () {
+                        if (numValue >= 0) { return true }
+                    }
+                    assert.isTrue(checkNumValue(), '"resultsTotal" must be greater than or equal to 0');
+                    assert.isString(el.resultsTotal, 'resultsTotal must be a string');
                 });
 
             });

@@ -358,27 +358,30 @@ Example:
 
                     if(hasFiltersActive) this.hasFilters = true;
                 },
-                _sortFilters: function(a, b) {
-                    return a.order - b.order;
-                },
                 _cleanFilters: function(list) {
                     return _.forEach(list, function(x) {
                         x.list = _.uniq(x.list);
                     });
                 },
+                _clearSelectedValues: function (list) {
+                    var selectedValues = this._elGetByIdOf(list).selectedValues;
+                    if(selectedValues) {
+                        selectedValues = [];
+                    }
+                },
+                _elGetByIdOf: function (list) {
+                    return this.$$('#'+ list.id);
+                },
                 _setTypeCheck: function (list, bool) {
                     var self = this;
                     if(list.typeCheck) {
-                        _.forEach(self.$$('#'+ list.id).getElementsByClassName('iron-selected'), function(n) {
+                        _.forEach(self._elGetByIdOf(list).getElementsByClassName('iron-selected'), function(n) {
                             n.checked = bool;
                         });
                     }
                 },
-                _clearSelectedValues: function (list) {
-                    var self = this;
-                    if(self.$$('#'+ list.id).selectedValues) {
-                        self.$$('#'+ list.id).selectedValues = [];
-                    }
+                _sortFilters: function(a, b) {
+                    return a.order - b.order;
                 },
                 load: function() {
                     this.resultsTotal = "0";
@@ -398,7 +401,7 @@ Example:
 
                     function _selectAppliedValues (list) {
                         _.forEach(list.appliedValues, function(sv) {
-                            self.$$('#'+ list.id).select(sv);
+                            self._elGetByIdOf(list).select(sv);
                         });
                     }
 
@@ -443,11 +446,10 @@ Example:
                 clearFilters: function() {
                     var self = this;
 
-                    _.forEach(this.filterList, function(list,i) {
+                    _.forEach(this.filterList, function(list, i) {
                         self._setTypeCheck(list, false);
-
-                        if(self.$$('#'+ list.id).selectedValues) {
-                            self.$$('#'+ list.id).selectedValues = [];
+                        if (self._elGetByIdOf(list).selectedValues) {
+                            self._elGetByIdOf(list).selectedValues = [];
                             self.filterList[i].appliedValues.length = 0;
                         }
 
@@ -467,8 +469,8 @@ Example:
                             self.filterList[i].appliedValues.splice(0, list.appliedValues.length);
                         }
 
-                        if(_.compact(self.$$('#'+ list.id).selectedValues).length) {
-                            _.forEach(_.compact(self.$$('#'+ list.id).selectedValues), function(sv) {
+                        if(_.compact(self._elGetByIdOf(list).selectedValues).length) {
+                            _.forEach(_.compact(self._elGetByIdOf(list).selectedValues), function(sv) {
                                 self.filterList[i].appliedValues.push(sv);
                             });
                         }
@@ -485,7 +487,9 @@ Example:
                 applySelected: function() {
                     var self = this;
                     var tmp = [];
-                    var clean = _.map(_.compact(this.activeApplied), function(o) { return _.omit(o, ['typeCheck', 'typeStar', 'typeScroll']); });
+                    var clean = _.map(_.compact(this.activeApplied), function(o) {
+                        return _.omit(o, ['typeCheck', 'typeStar', 'typeScroll']);
+                    });
                     var difference = function(array){
                         var rest = Array.prototype.concat.apply(Array.prototype, Array.prototype.slice.call(arguments, 1));
 
@@ -517,14 +521,17 @@ Example:
                         if(appliedValues.length) {
                             var condObject,
                                 appliedValue;
-                            function _checkIfFilterType (type) {
-                                _setConditionalObject(type);
-                                return !_.some(self.activeApplied, condObject);
-                            }
+
                             function _setConditionalObject (type) {
                                 condObject = { id : list.id, item : appliedValue };
                                 condObject[type] = true;
                             }
+
+                            function _checkIfFilterType (type) {
+                                _setConditionalObject(type);
+                                return !_.some(self.activeApplied, condObject);
+                            }
+
                             function _setActive () {
                                 self.push('activeApplied', condObject);
                             }

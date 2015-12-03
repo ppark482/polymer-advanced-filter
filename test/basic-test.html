@@ -9,17 +9,85 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
+        <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+        <script src="../../web-component-tester/browser.js"></script>
 
-    <!-- Step 1: import the element to test -->
-    <link rel="import" href="../advanced-filter.html">
-  </head>
-  <body>
+        <!-- Step 1: import the element to test -->
+        <link rel="import" href="../advanced-filter.html">
+    </head>
+    <body>
+        <advanced-filter id="filter"></advanced-filter>
 
-  </body>
+        <script>
+
+            // ----- Polymer Element Config ----- //
+            (function (){
+                var filter = document.getElementById('filter');
+                var filterList = [
+                    {
+                        "order": "1",
+                        "id": "fruitList",
+                        "title": "Filter By Fruit",
+                        "typeScroll": true,
+                        "list": ['Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry','Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry','Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry', 'Strawberry'],
+                        "appliedValues": []
+                    }, {
+                        "order":"2",
+                        "id":"vegetableList",
+                        "title":"Filter By Vegetable",
+                        "typeCheck":true,
+                        "list": ['Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry'],
+                        "appliedValues":[]
+                    }, {
+                        "order": "3",
+                        "id": "starList",
+                        "title": "Filter By Rating",
+                        "typeStar": true,
+                        "list": ['0', '1', '2', '3', '4', '5'],
+                        "appliedValues": []
+                    }
+                ];
+                filter.load();
+                filter.filterList = filterList;
+                filter.resultsTotal = '0';
+                filter.resultsTitle = 'Results';
+            }());
+
+            // ----- Tests ----- //
+            suite('<advanced-filter>', function () {
+
+                var el = document.querySelector('advanced-filter');
+
+                test('check for validity of filterList', function () {
+                    assert.isArray(el.filterList, '<advanced-filter> should have a property "filterList" that is an array of objects');
+                });
+
+                test('check objects in filterList', function () {
+                    var length = el.filterList.length,
+                        filterTypes = ['typeScroll', 'typeCheck', 'typeStar'];
+
+                    function checkForFilterTypes (obj) {
+
+                    }
+
+                    for (var i = 0; i < length; i++) {
+                        assert.isObject(el.filterList[i], 'must be an object');
+                        assert.isNumber(el.filterList[i].order, '"order" must be a string of a number');
+                        assert.isString(el.filterList[i].id, '"id" must be a string');
+                        assert.isString(el.filterList[i].title, '"title" must be a string');
+                        assert.isArray(el.filterList[i].list, '"list" must be an array');
+                        assert.isArray(el.filterList[i].appliedValues, '"appliedValues" must be an array');
+                        assert.isTrue(checkForFilterTypes(el.filterList[i]), '"typeScroll, "typeCheck", or "typeStar" must be a key in each object');
+                    }
+                });
+
+            });
+
+
+        </script>
+    </body>
 </html>

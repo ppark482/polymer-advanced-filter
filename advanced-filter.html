@@ -20,11 +20,67 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <script src="../lodash/lodash.min.js"></script>
 
 <!--
-Advanced Filtering Element
+<h1>Advanced Filtering Element</h1>
 
-Example:
+    <advanced-filter id="filter></advanced-filter>
 
-    <advanced-filter></advanced-filter>
+    <script>
+
+        (function (){
+            var filter = document.getElementById('filter');
+            var filterList = [
+                {
+                    "order": "1",
+                    "id": "fruitList",
+                    "title": "Filter By Fruit",
+                    "typeScroll": true,
+                    "list": [
+                        'Apples',
+                        'Bananas',
+                        'Cantaloupe',
+                        'Date',
+                        'Elderberry',
+                        'Apples',
+                        'Bananas',
+                        'Cantaloupe',
+                        'Date',
+                        'Elderberry',
+                        'Apples',
+                        'Bananas',
+                        'Cantaloupe',
+                        'Date',
+                        'Elderberry',
+                        'Strawberry'],
+                    "appliedValues": []
+                }, {
+                    "order":"2",
+                    "id":"vegetableList",
+                    "title":"Filter By Vegetable",
+                    "typeCheck":true,
+                    "list": [
+                        'Apples',
+                        'Bananas',
+                        'Cantaloupe',
+                        'Date',
+                        'Elderberry'],
+                    "appliedValues":[]
+                }, {
+                    "order": "3",
+                    "id": "starList",
+                    "title": "Filter By Rating",
+                    "typeStar": true,
+                    "list": ['0', '1', '2', '3', '4', '5'],
+                    "appliedValues": []
+                }
+            ];
+            filter.load();
+            filter.filterList = filterList;
+            filter.resultsTotal = '0';
+            filter.resultsTitle = 'Results';
+        }());
+
+    </script>
+
 
 @demo demo/index.html
 @hero hero.svg
@@ -265,7 +321,6 @@ Example:
                     <div class="filter-dropdown-open-cover-wide"></div>
                     <div class="flex horizontal layout filter-wrapper advanced-filters">
                         <template id="filterDropdownTemplate" is="dom-repeat" items="[[response]]" as="filter" sort="_sortFilters">
-
                             <template is="dom-if" if="[[filter.typeScroll]]">
                                 <div class="filter-wrap scroll-container">
                                     <h4>[[filter.title]]</h4>
@@ -364,9 +419,8 @@ Example:
                     });
                 },
                 _clearSelectedValues: function (list) {
-                    var selectedValues = this._elGetByIdOf(list).selectedValues;
-                    if (selectedValues) {
-                        selectedValues = [];
+                    if (this._elGetByIdOf(list).selectedValues) {
+                        this._elGetByIdOf(list).selectedValues = [];
                     }
                 },
                 _elGetByIdOf: function (list) {
@@ -381,6 +435,8 @@ Example:
                     }
                 },
                 _sortFilters: function(a, b) {
+                    a.order = parseInt(a.order);
+                    b.order = parseInt(b.order);
                     return a.order - b.order;
                 },
                 load: function() {

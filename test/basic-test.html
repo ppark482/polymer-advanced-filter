@@ -40,7 +40,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         "id":"vegetableList",
                         "title":"Filter By Vegetable",
                         "typeCheck": true,
-                        "list": ['Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry'],
+                        "list": ['Apples', 'Bananas', 'Cantaloupe', 'Date', 'Elderberry', 'Zucchini', 'Broccoli', 'Carrots', 'Cauliflower', 'Okra', 'Bacon', 'Eggs'],
                         "appliedValues":[]
                     }, {
                         "order": "3",
@@ -79,7 +79,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         for (var i = 0; i < 3; i++) {
                             if(hasProperty(obj, filterTypes[i])) {
                                 hasTrue = true;
-                                prop = filterTypes[i];
+                                if (obj.list.length > 10 && obj.typeCheck === false) { prop = 'typeScroll'; }
+                                else { prop = filterTypes[i]; }
                             }
                         }
                         return hasTrue;

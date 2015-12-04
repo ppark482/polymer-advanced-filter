@@ -415,6 +415,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 },
                 _cleanFilters: function(list) {
                     return _.forEach(list, function(x) {
+
+                        if(x.typeCheck && x.list.length > 10) {
+                            x.typeCheck = false;
+                            x.typeScroll = true;
+                        }
+
                         x.list = _.uniq(x.list);
                     });
                 },

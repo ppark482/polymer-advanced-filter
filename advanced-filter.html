@@ -558,7 +558,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                         var containsEquals = function(obj, target) {
                             if (obj === null) return false;
-                            return _.any(obj, function(value) {
+                            return _.includes(obj, function(value) {
                                 return _.isEqual(value, target);
                             });
                         };

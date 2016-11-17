@@ -428,6 +428,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     return this.$$('#'+ list.id);
                 },
                 _setTypeCheck: function (list, bool) {
+                    var self = this;
                     this.async(function(){
                         if (list.typeCheck) {
                         _.forEach(self._elGetByIdOf(list).getElementsByClassName('iron-selected'), function(n) {
